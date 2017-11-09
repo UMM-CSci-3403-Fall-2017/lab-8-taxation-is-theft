@@ -28,7 +28,6 @@ public class ThreadedMinimumPairwiseDistanceTest {
     @Test
     public void testSmallArrayWithDuplicates() {
         int[] values = new int[] { 3, 2, 0, 5, 8, 9, 6, 3, 2, 0 };
-//    	int[] values = new int[] { 3, 3, 0, 5, 8, 9, 6, 3, 2, 0 };
         int minimum = mpd.minimumPairwiseDistance(values);
         assertEquals(0, minimum);
     }

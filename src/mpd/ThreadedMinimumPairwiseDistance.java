@@ -8,16 +8,16 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
     	
     	Thread[] threads = new Thread[numThreads];
     	Answer ans = new Answer();
-    	int begin = 0;
-    	int end = (values.length/2);
+    	int seperator1 = 0;
+    	int seperator2 = (values.length/2);
     	
     	for(int i = 0; i < numThreads; i++){
     		
-    		threads[i] = new Thread(new MinimumPairwiseDistanceHelper(values, begin, ((int) end), ans, i));
+    		threads[i] = new Thread(new MinimumPairwiseDistanceHelper(values, seperator1, ((int) seperator2), ans, i));
     		threads[i].start();
     		
-    		begin = end;
-    		end = values.length;
+    		if(i==0) seperator1 = seperator2;
+    		seperator2 = values.length;
     	}
     	
     	for(int i = 0; i<numThreads; i++){
@@ -46,15 +46,15 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
     private class MinimumPairwiseDistanceHelper implements Runnable{
 
 		int[] values;
-		int begin;
-		int end;
+		int seperator1;
+		int seperator2;
 		Answer answer;
 		int type;
 		
-		private MinimumPairwiseDistanceHelper(int[] values, int begin, int end, Answer answer, int type){
+		private MinimumPairwiseDistanceHelper(int[] values, int seperator1, int seperator2, Answer answer, int type){
 			this.values = values;
-			this.begin = begin;
-			this.end = end;
+			this.seperator1 = seperator1;
+			this.seperator2 = seperator2;
 			this.answer = answer;
 			this.type = type;
 		}
@@ -62,47 +62,38 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
 		public void run() {
 			int result = Integer.MAX_VALUE;
 	        if(type == 0){
-	        	for (int i = begin; i < end; ++i) {
-		            for (int j = begin; j < i; ++j) {
+	        	for (int i = seperator1; i < seperator2; ++i) {
+		            for (int j = seperator1; j < i; ++j) {
 		            	
 		                int diff = Math.abs(values[i] - values[j]);
 		                if (diff < result) {
 		                    result = diff;
 		                }
 		            }
-		        }
-		        if(answer.getAnswer() > result){
-		        	answer.setAnswer(result);
 		        }
 	        } else if (type == 1){
-	        	for (int i = begin; i < end; ++i) {
-		            for (int j = begin + (values.length/2); j < i; ++j) {
+	        	for (int i = seperator1; i < seperator2; ++i) {
+		            for (int j = 0; j+(values.length/2) < i; ++j) {
 		            	
 		                int diff = Math.abs(values[i] - values[j]);
 		                if (diff < result) {
 		                    result = diff;
 		                }
 		            }
-		        }
-		        if(answer.getAnswer() > result){
-		        	answer.setAnswer(result);
 		        }
 	        } else if (type == 2){
-	        	for (int i = begin; i < end; ++i) {
-		            for (int j = begin; j < i; ++j) {
+	        	for (int i = seperator1; i < seperator2; ++i) {
+		            for (int j = seperator1; j < i; ++j) {
 		            	
 		                int diff = Math.abs(values[i] - values[j]);
 		                if (diff < result) {
 		                    result = diff;
 		                }
 		            }
-		        }
-		        if(answer.getAnswer() > result){
-		        	answer.setAnswer(result);
 		        }
 	        } else if (type == 3){
-	        	for (int j = begin + (values.length/2); j < end; ++j) {
-		            for (int i = begin; i < j; ++i) {
+	        	for (int j = 0; j < seperator1; ++j) {
+		            for (int i = seperator1; i < j + (values.length/2); ++i) {
 		            	
 		                int diff = Math.abs(values[i] - values[j]);
 		                if (diff < result) {
@@ -110,9 +101,9 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
 		                }
 		            }
 		        }
-		        if(answer.getAnswer() > result){
-		        	answer.setAnswer(result);
-		        }
+	        }
+	        if(answer.getAnswer() > result){
+	        	answer.setAnswer(result);
 	        }
 		}
     	
